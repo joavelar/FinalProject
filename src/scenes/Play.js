@@ -15,6 +15,22 @@ class Play extends Phaser.Scene {
             volume: 0.5,
         }
 
+        //config the timer
+        let timerConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#808080',
+            align: 'right',
+            padding:{
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 100,
+            timeLeft: 60000
+        }
+        //adding text to timer
+        this.timerLeft = this.add.text(game.config.width-120, borderUISize - borderPadding*2, timerConfig.timeLeft, timerConfig)
+
         //define keys
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -63,6 +79,9 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        //run down the timer
+
+        this.timerLeft.text = Math.round(60000)
 
         //test
         if(Phaser.Input.Keyboard.JustDown(keyS)) {
