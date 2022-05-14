@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         this.load.image('lock body', './asset/images/Lock_Body.png');
         this.load.image('key pin 1', './asset/images/Key_Pin_1.png');
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
+        this.load.image('timer', './asset/images/Timer.png');
     }
 
     create() {
@@ -20,16 +21,20 @@ class Play extends Phaser.Scene {
             fontFamily: 'Courier',
             fontSize: '28px',
             backgroundColor: '#808080',
-            align: 'right',
+            align: 'center',
             padding:{
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 100,
+            fixedWidth: 120,
             timeLeft: 60000
         }
+        //add timer overlay
+        this.timerGraphic = this.add.tileSprite(game.config.width-315, borderUISize - 188, 382, 382, 'timer').setOrigin(0, 0);
+        this.timerGraphic.depth = 1
+
         //adding text to timer
-        this.timerLeft = this.add.text(game.config.width-120, borderUISize - borderPadding*2, timerConfig.timeLeft, timerConfig)
+        this.timerLeft = this.add.text(game.config.width-180, borderUISize - borderPadding, timerConfig.timeLeft, timerConfig)
 
         //define keys
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
