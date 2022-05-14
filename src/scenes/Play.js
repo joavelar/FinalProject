@@ -9,10 +9,6 @@ class Play extends Phaser.Scene {
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
     }
 
-    getRandomInt(max) {//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-        return Math.floor(Math.random() * max);
-      }
-
     create() {
         //configuration code for audio
         let musicConfig = {
@@ -54,9 +50,28 @@ class Play extends Phaser.Scene {
         //track the default y positions of each pin
         this.keyPinY = [this.keyPins[0].y, this.keyPins[1].y, this.keyPins[2].y, this.keyPins[3].y, this.keyPins[4].y, this.keyPins[5].y];
         this.driverPinY = [this.driverPins[0].y, this.driverPins[1].y, this.driverPins[2].y, this.driverPins[3].y, this.driverPins[4].y, this.driverPins[5].y];
+
+        //pin order and tracking how far along you are in completing it and which pins are set
+        //randomization is from: https://javascript.info/task/shuffle
+        this.pinOrder = [5,4,1,3,2,0];
+        for (let i = this.pinOrder.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [this.pinOrder[i], this.pinOrder[j]] = [this.pinOrder[j], this.pinOrder[i]];
+        }
+        this.currentStep = 0;
+        this.setPins = [false, false, false, false, false, false];
     }
 
     update() {
+
+        //test
+        if(Phaser.Input.Keyboard.JustDown(keyS)) {
+            console.log("pointrPos: " + this.pointerPos);
+            console.log("currentStep: " + this.currentStep);
+            console.log("pinOrder: " +  this.pinOrder);
+            console.log("setPins: " + this.setPins);
+        }
+
         //move pointer
         if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
             this.pointerPos ++;
@@ -70,6 +85,18 @@ class Play extends Phaser.Scene {
         if(Phaser.Input.Keyboard.JustDown(keyW)) {
             this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
             this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
+            //set the pin if it's the right one
+            if (this.pointerPos == this.pinOrder[this.currentStep]) {
+                console.log("pin set!")
+                this.setPins[this.pointerPos] = true;
+                this.currentStep ++;
+
+                //win the game
+                if(this.currentStep == 6) {
+                    this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
+                    this.create();
+                }
+            }
         }
 
         //pin drop
@@ -78,7 +105,8 @@ class Play extends Phaser.Scene {
             if(this.keyPins[i].y < this.keyPinY[i]) {
                 this.keyPins[i].y += .75;
             }
-            if(this.driverPins[i].y < this.driverPinY[i]) {
+            //driver pin won't drop if it's set
+            if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
                 this.driverPins[i].y += .75;
             }
         }
