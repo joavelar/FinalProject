@@ -105,9 +105,11 @@ class Play extends Phaser.Scene {
 
             //move pointer
             if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
+                this.sound.play('sfx_Switch');
                 this.pointerPos ++;
             }
             else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
+                this.sound.play('sfx_Switch');
                 this.pointerPos --;
             }
             this.pointer.x = this.pointerX[this.pointerPos];
