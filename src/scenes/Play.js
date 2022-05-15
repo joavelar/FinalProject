@@ -27,14 +27,19 @@ class Play extends Phaser.Scene {
                 bottom: 5,
             },
             fixedWidth: 120,
-            timeLeft: 60000
+            //timeLeft: 60000
         }
         //add timer overlay
-        this.timerGraphic = this.add.tileSprite(game.config.width-315, borderUISize - 188, 382, 382, 'timer').setOrigin(0, 0);
-        this.timerGraphic.depth = 1
+        //this.timerGraphic = this.add.tileSprite(game.config.width-315, borderUISize - 188, 382, 382, 'timer').setOrigin(0, 0);
+        //this.timerGraphic.depth = 1
 
         //adding text to timer
-        this.timerLeft = this.add.text(game.config.width-180, borderUISize - borderPadding, timerConfig.timeLeft, timerConfig)
+        //this.timerLeft = this.add.text(game.config.width-180, borderUISize - borderPadding, timerConfig.timeLeft, timerConfig)
+
+        this.clock = this.time.delayedCall(60000, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', timerConfig).setOrigin(0.5);}, null, this);
+        //trying to add time left
+        this.timeLeft = this.add.text(borderUISize + borderPadding*35, borderUISize + borderPadding*2, this.clock.getRemainingSeconds().toFixed(0), timerConfig);
 
         //define keys
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -85,8 +90,8 @@ class Play extends Phaser.Scene {
 
     update() {
         //run down the timer
-
-        this.timerLeft.text = Math.round(60000)
+        this.timeLeft.text = this.clock.getRemainingSeconds().toFixed(0);
+        //this.timerLeft.text = Math.round(60000)
 
         //test
         if(Phaser.Input.Keyboard.JustDown(keyS)) {
