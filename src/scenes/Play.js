@@ -120,6 +120,7 @@ class Play extends Phaser.Scene {
                 this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
                 //set the pin if it's the right one
                 if (this.pointerPos == this.pinOrder[this.currentStep]) {
+                    this.sound.play('sfx_TrueClick');
                     console.log("pin set!")
                     this.setPins[this.pointerPos] = true;
                     this.currentStep ++;
