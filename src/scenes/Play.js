@@ -133,6 +133,8 @@ class Play extends Phaser.Scene {
                         this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
                         //this.create();
                     }
+                }else{
+                    this.sound.play('sfx_LoosePin');
                 }
             }
 
