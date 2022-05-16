@@ -11,6 +11,9 @@ class Play extends Phaser.Scene {
         this.load.image('People', './asset/images/ThePeople.png')
     }
     create() {
+        //game over flag
+        this.gameOver = false;
+
         //configuration code for audio
         let musicConfig = {
             volume: 0.5,
@@ -37,7 +40,7 @@ class Play extends Phaser.Scene {
         
         //setting up the clock
         this.clock = this.time.delayedCall(60000, () => {
-
+            this.gameOver = true; // once timer runs it means game over
         }, null, this)
 
         //define keys
@@ -94,17 +97,29 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        //run down the timer
+        //stop if gameOver is true
+        if (!this.gameOver){
+            //run down the timer
+            this.timerLeft.text = Math.round(this.clock.delay-this.clock.elapsed)
 
-        this.timerLeft.text = Math.round(this.clock.delay-this.clock.elapsed)
+            //test
+            if(Phaser.Input.Keyboard.JustDown(keyS)) {
+                console.log("pointrPos: " + this.pointerPos);
+                console.log("currentStep: " + this.currentStep);
+                console.log("pinOrder: " +  this.pinOrder);
+                console.log("setPins: " + this.setPins);
+            }
 
-        //test
-        if(Phaser.Input.Keyboard.JustDown(keyS)) {
-            console.log("pointrPos: " + this.pointerPos);
-            console.log("currentStep: " + this.currentStep);
-            console.log("pinOrder: " +  this.pinOrder);
-            console.log("setPins: " + this.setPins);
-        }
+            //move pointer
+            if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
+                this.sound.play('sfx_Switch');
+                this.pointerPos ++;
+            }
+            else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
+                this.sound.play('sfx_Switch');
+                this.pointerPos --;
+            }
+            this.pointer.x = this.pointerX[this.pointerPos];
 
         
         //move pointer
@@ -115,35 +130,45 @@ class Play extends Phaser.Scene {
             this.pointerPos --;
         }
         this.pointer.x = this.pointerX[this.pointerPos];
+            //bump pin
+            if(Phaser.Input.Keyboard.JustDown(keyW)) {
+                this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
+                this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
+                //set the pin if it's the right one
+                if (this.pointerPos == this.pinOrder[this.currentStep]) {
+                    this.sound.play('sfx_TrueClick');
+                    console.log("pin set!")
+                    this.setPins[this.pointerPos] = true;
+                    this.currentStep ++;
+                    console.log(this.gameOver);
 
-        //bump pin
-        if(Phaser.Input.Keyboard.JustDown(keyW)) {
-            this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
-            this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
-            //set the pin if it's the right one
-            if (this.pointerPos == this.pinOrder[this.currentStep]) {
-                console.log("pin set!")
-                this.setPins[this.pointerPos] = true;
-                this.currentStep ++;
-
-                //win the game
-                if(this.currentStep == 6) {
-                    this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
-                    this.create();
+                    //win the game
+                    if(this.currentStep == 6) {
+                        this.gameOver = true; //  for now we want it to end here
+                        console.log(this.gameOver);
+                        this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
+                        //this.create();
+                    }
+                }else{
+                    this.sound.play('sfx_LoosePin');
                 }
             }
+
+            //pin drop
+            for(let i = 0; i < this.keyPins.length; i++)
+            {
+                if(this.keyPins[i].y < this.keyPinY[i]) {
+                    this.keyPins[i].y += .75;
+                }
+                //driver pin won't drop if it's set
+                if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
+                    this.driverPins[i].y += .75;
+                }
+            }
+        }else{
+            this.scene.start("menuScene");
         }
 
-        //pin drop
-        for(let i = 0; i < this.keyPins.length; i++)
-        {
-            if(this.keyPins[i].y < this.keyPinY[i]) {
-                this.keyPins[i].y += .75;
-            }
-            //driver pin won't drop if it's set
-            if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
-                this.driverPins[i].y += .75;
-            }
-        }
+        
     }
 }
