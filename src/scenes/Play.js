@@ -8,6 +8,7 @@ class Play extends Phaser.Scene {
         this.load.image('key pin 1', './asset/images/Key_Pin_1.png');
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
         this.load.image('timer', './asset/images/Timer.png');
+        this.load.image('People', './asset/images/ThePeople.png')
     }
     create() {
         //configuration code for audio
@@ -49,7 +50,8 @@ class Play extends Phaser.Scene {
         this.pointerX = [130, 193, 255, 314, 372, 430];
         this.pointerY = 325;
         this.pointerPos = 0;
-        this.pointer = this.add.rectangle(this.pointerX[this.pointerPos], this.pointerY, 5, 10, 0x767676).setOrigin(0, 0);
+        // old pointer color was 0x767676, briefly changed it to red for visibility
+        this.pointer = this.add.rectangle(this.pointerX[this.pointerPos], this.pointerY, 5, 10, 0xFF0000).setOrigin(0, 0);
 
         //add lock body and pins
         this.lockBody = this.add.tileSprite(100, 200, 720, 480, 'lock body').setOrigin(0, 0);
@@ -84,6 +86,11 @@ class Play extends Phaser.Scene {
         }
         this.currentStep = 0;
         this.setPins = [false, false, false, false, false, false];
+
+        //Adding the people sprite
+        this.people = this.add.tileSprite(0,20,game.config.width, game.config.height, "People").setOrigin(0,0);
+        this.people.depth = -1
+
     }
 
     update() {
@@ -99,6 +106,7 @@ class Play extends Phaser.Scene {
             console.log("setPins: " + this.setPins);
         }
 
+        
         //move pointer
         if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
             this.pointerPos ++;
