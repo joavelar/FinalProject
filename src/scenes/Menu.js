@@ -6,7 +6,7 @@ class Menu extends Phaser.Scene {
         //load menu image
 
         //load all the audio elements
-        this.load.audio('sfx_LoosePin', './asset/sound/Loose_Pin.wav');
+        this.load.audio('sfx_LoosePin', './asset/sound/Loose_Pin.mp3');
         this.load.audio('sfx_Switch', './asset/sound/Switch_Selection.wav');
         this.load.audio('sfx_TrueClick', './asset/sound/True_Click.wav');
         this.load.audio('sfx_Serrated', './asset/sound/Serrated_Click.wav');
