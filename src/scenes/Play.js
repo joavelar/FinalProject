@@ -9,6 +9,7 @@ class Play extends Phaser.Scene {
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
         this.load.image('timer', './asset/images/Timer.png');
         this.load.image('People', './asset/images/ThePeople.png')
+        this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
     }
     create() {
         //game over flag
@@ -76,6 +77,18 @@ class Play extends Phaser.Scene {
         this.driverPinF = this.add.tileSprite(417, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
         this.driverPins = [this.driverPinA, this.driverPinB, this.driverPinC, this.driverPinD, this.driverPinE, this.driverPinF];
 
+        //random pin emotes
+        this.emoteList = [0,1,2,3,4,5,6,7,8,9,10,11];
+        this.levelEmotes = this.shuffle(this.emoteList);
+
+        this.emotePinA = this.add.image(121, 223, 'emotes', this.levelEmotes[0]).setOrigin(0, 0);
+        this.emotePinB = this.add.image(184, 223, 'emotes', this.levelEmotes[1]).setOrigin(0, 0);
+        this.emotePinC = this.add.image(246, 223, 'emotes', this.levelEmotes[2]).setOrigin(0, 0);
+        this.emotePinD = this.add.image(305, 223, 'emotes', this.levelEmotes[3]).setOrigin(0, 0);
+        this.emotePinE = this.add.image(363, 223, 'emotes', this.levelEmotes[4]).setOrigin(0, 0);
+        this.emotePinF = this.add.image(421, 223, 'emotes', this.levelEmotes[5]).setOrigin(0, 0);
+        this.emotePins = [this.emotePinA, this.emotePinB, this.emotePinC, this.emotePinD, this.emotePinE, this.emotePinF]
+
         //track the default y positions of each pin
         this.keyPinY = [this.keyPins[0].y, this.keyPins[1].y, this.keyPins[2].y, this.keyPins[3].y, this.keyPins[4].y, this.keyPins[5].y];
         this.driverPinY = [this.driverPins[0].y, this.driverPins[1].y, this.driverPins[2].y, this.driverPins[3].y, this.driverPins[4].y, this.driverPins[5].y];
@@ -133,6 +146,7 @@ class Play extends Phaser.Scene {
             //bump pin
             if(Phaser.Input.Keyboard.JustDown(keyW)) {
                 this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
+                this.emotePins[this.pointerPos].y = this.driverPinY[this.pointerPos]-14;
                 this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
                 //set the pin if it's the right one
                 if (this.pointerPos == this.pinOrder[this.currentStep]) {
@@ -163,6 +177,7 @@ class Play extends Phaser.Scene {
                 //driver pin won't drop if it's set
                 if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
                     this.driverPins[i].y += .75;
+                    this.emotePins[i].y += .75;
                 }
             }
         }else{
@@ -171,4 +186,23 @@ class Play extends Phaser.Scene {
 
         
     }
+
+    // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+    shuffle(array) {
+        let currentIndex = array.length,  randomIndex;
+      
+        // While there remain elements to shuffle.
+        while (currentIndex != 0) {
+      
+          // Pick a remaining element.
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+      
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+      
+        return array;
+      }
 }
