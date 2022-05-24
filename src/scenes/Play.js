@@ -5,6 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('lock body', './asset/images/Lock_Body.png');
+        this.load.image('lock cover', './asset/images/Lock_Cover.png');
         this.load.image('key pin 1', './asset/images/Key_Pin_1.png');
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
         this.load.image('timer', './asset/images/Timer.png');
@@ -37,11 +38,18 @@ class Play extends Phaser.Scene {
         this.timerGraphic.depth = 1
 
         //adding text to timer
-        this.timerLeft = this.add.text(game.config.width-180, borderUISize - borderPadding, this.gameTimer, timerConfig)
+        this.timerLeft = this.add.text(game.config.width-180, borderUISize - borderPadding, this.gameTimer, timerConfig);
         
-        //setting up the clock
-        this.clock = this.time.delayedCall(60000, () => {
-            this.gameOver = true; // once timer runs it means game over
+        //setting up pre-level delay before lock is covered
+        this.levelStart = false;
+        this.timerLength = 60;
+        this.memorizeText = this.add.text(game.config.width/3, borderUISize*3 - borderPadding, "Memorize the Symbols");
+        this.preClock = this.time.delayedCall(5000, () => {
+            this.levelStart = true; // the lock has been covered and the level timer will begin
+            this.memorizeText.y = 1000;
+            this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
+                this.gameOver = true; // once timer runs it means game over
+            }, null, this)
         }, null, this)
 
         //define keys
@@ -107,13 +115,26 @@ class Play extends Phaser.Scene {
         this.people = this.add.tileSprite(0,20,game.config.width, game.config.height, "People").setOrigin(0,0);
         this.people.depth = -1
 
+        //Add Lock Cover
+        this.lockCover = this.add.tileSprite(100, 1000, 720, 480, 'lock cover').setOrigin(0, 0);
+        
+
     }
 
     update() {
-        //stop if gameOver is true
-        if (!this.gameOver){
+        //stop if gameOver is true or level hasn't started
+        if(!this.levelStart){
+
+            //keep timer frozen
+            this.timerLeft.text = this.timerLength;
+
+            //move lock cover towards lock
+            this.lockCover.y = 200+Math.round((this.preClock.delay-this.preClock.elapsed)/10)
+
+        } else if (!this.gameOver){
+
             //run down the timer
-            this.timerLeft.text = Math.round(this.clock.delay-this.clock.elapsed)
+            this.timerLeft.text = Math.round((this.clock.delay-this.clock.elapsed)/1000)
 
             //test
             if(Phaser.Input.Keyboard.JustDown(keyS)) {
@@ -135,14 +156,15 @@ class Play extends Phaser.Scene {
             this.pointer.x = this.pointerX[this.pointerPos];
 
         
-        //move pointer
-        if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
-            this.pointerPos ++;
-        }
-        else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
-            this.pointerPos --;
-        }
-        this.pointer.x = this.pointerX[this.pointerPos];
+            //move pointer
+            if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
+                this.pointerPos ++;
+            }
+            else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
+                this.pointerPos --;
+            }
+            this.pointer.x = this.pointerX[this.pointerPos];
+            
             //bump pin
             if(Phaser.Input.Keyboard.JustDown(keyW)) {
                 this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
