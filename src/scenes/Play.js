@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
     }
     create() {
-        //
+        //Find out the size of the window
         var w = window.innerWidth;
         var h = window.innerHeight;
         console.log(w)
