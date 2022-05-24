@@ -13,6 +13,12 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
     }
     create() {
+        //
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        console.log(w)
+        console.log(h)
+
         //game over flag
         this.gameOver = false;
 
