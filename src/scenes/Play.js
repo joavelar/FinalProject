@@ -11,8 +11,11 @@ class Play extends Phaser.Scene {
         this.load.image('timer', './asset/images/Timer.png');
         this.load.image('People', './asset/images/ThePeople.png')
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
+        this.load.image('customer bubble', './asset/images/flipped_small_bubble.png')
+        this.load.image('player bubble', './asset/images/small_bubble.png')
     }
     create() {
+
         //Find out the size of the window
         var w = window.innerWidth;
         var h = window.innerHeight;
@@ -49,10 +52,21 @@ class Play extends Phaser.Scene {
         //setting up pre-level delay before lock is covered
         this.levelStart = false;
         this.timerLength = 60;
-        this.memorizeText = this.add.text(game.config.width/3, borderUISize*3 - borderPadding, "Memorize the Symbols");
-        this.preClock = this.time.delayedCall(5000, () => {
+        this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
+        this.preClock = this.time.delayedCall(8000, () => {
             this.levelStart = true; // the lock has been covered and the level timer will begin
             this.memorizeText.y = 1000;
+
+            // show the correct order of symbols
+            this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
+            this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
+            this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+            this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+            this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+            this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+            this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+            this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+
             this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
                 this.gameOver = true; // once timer runs it means game over
             }, null, this)
@@ -64,43 +78,47 @@ class Play extends Phaser.Scene {
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
+        //x and y offset of the whole lock, pins, lockpick setup
+        this.xOffset = 0;
+        this.yOffset = 20;
+
         //set pointer x and y positions and its starting position.
         this.pointerX = [130, 193, 255, 314, 372, 430];
-        this.pointerY = 325;
+        this.pointerY = 130+this.yOffset;
         this.pointerPos = 0;
         // old pointer color was 0x767676, briefly changed it to red for visibility
         this.pointer = this.add.rectangle(this.pointerX[this.pointerPos], this.pointerY, 5, 10, 0xFF0000).setOrigin(0, 0);
 
         //add lock body and pins
-        this.lockBody = this.add.tileSprite(100, 200, 720, 480, 'lock body').setOrigin(0, 0);
+        this.lockBody = this.add.tileSprite(100, 0+this.yOffset, 720, 480, 'lock body').setOrigin(0, 0);
 
-        this.keyPinA = this.add.tileSprite(117, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
-        this.keyPinB = this.add.tileSprite(180, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
-        this.keyPinC = this.add.tileSprite(242, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
-        this.keyPinD = this.add.tileSprite(301, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
-        this.keyPinE = this.add.tileSprite(359, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
-        this.keyPinF = this.add.tileSprite(417, 253, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinA = this.add.tileSprite(117, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinB = this.add.tileSprite(180, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinC = this.add.tileSprite(242, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinD = this.add.tileSprite(301, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinE = this.add.tileSprite(359, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
+        this.keyPinF = this.add.tileSprite(417, 53+this.yOffset, 32, 64, 'key pin 1').setOrigin(0, 0);
         this.keyPins = [this.keyPinA, this.keyPinB, this.keyPinC, this.keyPinD, this.keyPinE, this.keyPinF];
 
 
-        this.driverPinA = this.add.tileSprite(117, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
-        this.driverPinB = this.add.tileSprite(180, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
-        this.driverPinC = this.add.tileSprite(242, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
-        this.driverPinD = this.add.tileSprite(301, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
-        this.driverPinE = this.add.tileSprite(359, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
-        this.driverPinF = this.add.tileSprite(417, 221, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinA = this.add.tileSprite(117, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinB = this.add.tileSprite(180, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinC = this.add.tileSprite(242, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinD = this.add.tileSprite(301, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinE = this.add.tileSprite(359, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
+        this.driverPinF = this.add.tileSprite(417, 21+this.yOffset, 32, 32, 'driver pin 1').setOrigin(0, 0);
         this.driverPins = [this.driverPinA, this.driverPinB, this.driverPinC, this.driverPinD, this.driverPinE, this.driverPinF];
 
         //random pin emotes
         this.emoteList = [0,1,2,3,4,5,6,7,8,9,10,11];
         this.levelEmotes = this.shuffle(this.emoteList);
 
-        this.emotePinA = this.add.image(121, 223, 'emotes', this.levelEmotes[0]).setOrigin(0, 0);
-        this.emotePinB = this.add.image(184, 223, 'emotes', this.levelEmotes[1]).setOrigin(0, 0);
-        this.emotePinC = this.add.image(246, 223, 'emotes', this.levelEmotes[2]).setOrigin(0, 0);
-        this.emotePinD = this.add.image(305, 223, 'emotes', this.levelEmotes[3]).setOrigin(0, 0);
-        this.emotePinE = this.add.image(363, 223, 'emotes', this.levelEmotes[4]).setOrigin(0, 0);
-        this.emotePinF = this.add.image(421, 223, 'emotes', this.levelEmotes[5]).setOrigin(0, 0);
+        this.emotePinA = this.add.image(121, 23+this.yOffset, 'emotes', this.levelEmotes[0]).setOrigin(0, 0);
+        this.emotePinB = this.add.image(184, 23+this.yOffset, 'emotes', this.levelEmotes[1]).setOrigin(0, 0);
+        this.emotePinC = this.add.image(246, 23+this.yOffset, 'emotes', this.levelEmotes[2]).setOrigin(0, 0);
+        this.emotePinD = this.add.image(305, 23+this.yOffset, 'emotes', this.levelEmotes[3]).setOrigin(0, 0);
+        this.emotePinE = this.add.image(363, 23+this.yOffset, 'emotes', this.levelEmotes[4]).setOrigin(0, 0);
+        this.emotePinF = this.add.image(421, 23+this.yOffset, 'emotes', this.levelEmotes[5]).setOrigin(0, 0);
         this.emotePins = [this.emotePinA, this.emotePinB, this.emotePinC, this.emotePinD, this.emotePinE, this.emotePinF]
 
         //track the default y positions of each pin
@@ -123,8 +141,6 @@ class Play extends Phaser.Scene {
 
         //Add Lock Cover
         this.lockCover = this.add.tileSprite(100, 1000, 720, 480, 'lock cover').setOrigin(0, 0);
-        
-
     }
 
     update() {
@@ -135,7 +151,7 @@ class Play extends Phaser.Scene {
             this.timerLeft.text = this.timerLength;
 
             //move lock cover towards lock
-            this.lockCover.y = 200+Math.round((this.preClock.delay-this.preClock.elapsed)/10)
+            this.lockCover.y = this.yOffset+Math.round((this.preClock.delay-this.preClock.elapsed)/10)
 
         } else if (!this.gameOver){
 
