@@ -15,13 +15,6 @@ class Play extends Phaser.Scene {
         this.load.image('player bubble', './asset/images/small_bubble.png')
     }
     create() {
-
-        //Find out the size of the window
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        console.log(w)
-        console.log(h)
-
         //game over flag
         this.gameOver = false;
 
@@ -141,6 +134,9 @@ class Play extends Phaser.Scene {
 
         //Add Lock Cover
         this.lockCover = this.add.tileSprite(100, 1000, 720, 480, 'lock cover').setOrigin(0, 0);
+
+        //wrong answer counter
+        this.wrong = 0;
     }
 
     update() {
@@ -199,6 +195,8 @@ class Play extends Phaser.Scene {
                     this.setPins[this.pointerPos] = true;
                     this.currentStep ++;
                     console.log(this.gameOver);
+                    //reset wrong counter
+                    this.wrong = 0;
 
                     //win the game
                     if(this.currentStep == 6) {
@@ -209,6 +207,19 @@ class Play extends Phaser.Scene {
                     }
                 }else{
                     this.sound.play('sfx_LoosePin');
+                    //add counter
+                    this.wrong += 1;
+                    console.log("wrong: ",this.wrong);
+                    //check counter is 2 or 0 if so then drop previous pin if any
+                    if((this.currentStep>0) && this.wrong == 2){
+                        console.log("wrong: ",this.wrong);
+                        this.wrong = 0;
+                        console.log("wrong: ",this.wrong);
+                        this.currentStep -= 1;
+                        let n = this.pinOrder[this.currentStep]; //[5,2,0,4,1,3]
+                        this.setPins[n] = false;
+                    }
+                   
                 }
             }
 
