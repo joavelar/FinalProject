@@ -9,14 +9,23 @@ class Play extends Phaser.Scene {
         this.load.image('key pin 1', './asset/images/Key_Pin_1.png');
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
         this.load.image('timer', './asset/images/Timer.png');
-        this.load.image('People', './asset/images/ThePeople.png')
+        this.load.image('player', './asset/images/Player.png')
+        this.load.image('customer 1', './asset/images/Level_1_person.png')
+        this.load.image('customer 2', './asset/images/Level_2_person.png')
+        this.load.image('customer 3', './asset/images/Level_3_person.png')
+        this.load.image('customer 4', './asset/images/Level_4_person.png')
+        this.load.image('customer 5', './asset/images/Level_5_person.png')
+        this.load.image('customer 6', './asset/images/Level_6_person.png')
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
         this.load.image('customer bubble', './asset/images/flipped_small_bubble.png')
         this.load.image('player bubble', './asset/images/small_bubble.png')
     }
     create() {
+        console.log(window.currentLevel);
+
         //game over flag
         this.gameOver = false;
+        this.win = false;
 
         //configuration code for audio
         let musicConfig = {
@@ -44,14 +53,13 @@ class Play extends Phaser.Scene {
         
         //setting up pre-level delay before lock is covered
         this.levelStart = false;
-        this.timerLength = 60;
+        this.timerLength = 60 - window.currentLevel*10;
         this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
         this.preClock = this.time.delayedCall(8000, () => {
             this.levelStart = true; // the lock has been covered and the level timer will begin
             this.memorizeText.y = 1000;
 
             // show the correct order of symbols
-            this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
             this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
             this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
             this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
@@ -59,6 +67,16 @@ class Play extends Phaser.Scene {
             this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
             this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
             this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+
+            // create the player's order of symbols
+            this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
+            this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+            this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+            this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+            this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+            this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+            this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+            this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
 
             this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
                 this.gameOver = true; // once timer runs it means game over
@@ -128,9 +146,12 @@ class Play extends Phaser.Scene {
         this.currentStep = 0;
         this.setPins = [false, false, false, false, false, false];
 
-        //Adding the people sprite
-        this.people = this.add.tileSprite(0,20,game.config.width, game.config.height, "People").setOrigin(0,0);
-        this.people.depth = -1
+        //Adding the player and customer sprite
+        this.customers = ["customer 1", "customer 2", "customer 3", "customer 4", "customer 5", "customer 6"]
+        this.player = this.add.tileSprite(0,20,game.config.width, game.config.height, "player").setOrigin(0,0);
+        this.customer = this.add.tileSprite(0,20,game.config.width, game.config.height, this.customers[window.currentLevel]).setOrigin(0,0);
+        this.player.depth = -1
+        this.customer.depth = -1
 
         //Add Lock Cover
         this.lockCover = this.add.tileSprite(100, 1000, 720, 480, 'lock cover').setOrigin(0, 0);
@@ -193,6 +214,7 @@ class Play extends Phaser.Scene {
                     this.sound.play('sfx_TrueClick');
                     console.log("pin set!")
                     this.setPins[this.pointerPos] = true;
+                    this.emotePlayers[this.currentStep].y = 240;
                     this.currentStep ++;
                     console.log(this.gameOver);
                     //reset wrong counter
@@ -201,6 +223,7 @@ class Play extends Phaser.Scene {
                     //win the game
                     if(this.currentStep == 6) {
                         this.gameOver = true; //  for now we want it to end here
+                        this.win = true;
                         console.log(this.gameOver);
                         this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
                         //this.create();
@@ -218,9 +241,11 @@ class Play extends Phaser.Scene {
                         this.currentStep -= 1;
                         let n = this.pinOrder[this.currentStep]; //[5,2,0,4,1,3]
                         this.setPins[n] = false;
+                        this.emotePlayers[this.currentStep].y = 1000
                     }
                    
                 }
+
             }
 
             //pin drop
@@ -234,9 +259,20 @@ class Play extends Phaser.Scene {
                     this.driverPins[i].y += .75;
                     this.emotePins[i].y += .75;
                 }
+
             }
+
         }else{
-            this.scene.start("menuScene");
+            if(this.win){
+                window.currentLevel += 1;
+            }
+            if(window.currentLevel == 6) {
+                this.scene.start("menuScene");
+            }
+            else
+            {
+                this.scene.start("playScene");
+            }
         }
 
         
