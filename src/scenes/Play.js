@@ -53,35 +53,38 @@ class Play extends Phaser.Scene {
         
         //setting up pre-level delay before lock is covered
         this.levelStart = false;
-        this.timerLength = 60 - window.currentLevel*10;
-        this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
-        this.preClock = this.time.delayedCall(8000, () => {
-            this.levelStart = true; // the lock has been covered and the level timer will begin
-            this.memorizeText.y = 1000;
+        if(window.currentLevel > 0)
+        {
+            this.timerLength = 60 - window.currentLevel*10;
+            this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
+            this.preClock = this.time.delayedCall(8000, () => {
+                this.levelStart = true; // the lock has been covered and the level timer will begin
+                this.memorizeText.y = 1000;
 
-            // show the correct order of symbols
-            this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
-            this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
-            this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
-            this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
-            this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
-            this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
-            this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+                // show the correct order of symbols
+                this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
+                this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
 
-            // create the player's order of symbols
-            this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
-            this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
-            this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
-            this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
-            this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
-            this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
-            this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
-            this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
+                // create the player's order of symbols
+                this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
+                this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+                this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
 
-            this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
-                this.gameOver = true; // once timer runs it means game over
+                this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
+                    this.gameOver = true; // once timer runs it means game over
+                }, null, this)
             }, null, this)
-        }, null, this)
+        }
 
         //define keys
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -158,22 +161,151 @@ class Play extends Phaser.Scene {
 
         //wrong answer counter
         this.wrong = 0;
+
+        //tutorial setup
+        if(window.currentLevel == 0){
+            this.player.x -=300;
+            this.customer.x+=300;
+            this.lockGroup = [this.lockBody, this.pointer,
+                              this.keyPinA, this.keyPinB, this.keyPinC, this.keyPinD, this.keyPinE, this.keyPinF,
+                              this.driverPinA, this.driverPinB, this.driverPinC, this.driverPinD, this.driverPinE, this.driverPinF,
+                              this.emotePinA, this.emotePinB, this.emotePinC, this.emotePinD, this.emotePinE, this.emotePinF];
+            
+            _.each(this.lockGroup, function(entry) {
+                entry.y -= 200;
+            })
+            this.timerGraphic.y -= 100;
+            this.timerLeft.y -= 100;
+            this.tutorialStep = 0;
+        }
     }
 
     update() {
         //stop if gameOver is true or level hasn't started
-        if(!this.levelStart){
+        if(!this.levelStart && window.currentLevel > 0){
 
             //keep timer frozen
             this.timerLeft.text = this.timerLength;
 
             //move lock cover towards lock
-            this.lockCover.y = this.yOffset+Math.round((this.preClock.delay-this.preClock.elapsed)/10)
+            this.lockCover.y = this.yOffset+Math.round((this.preClock.delay-this.preClock.elapsed)/10);
+
+        //tutorial sequence
+        }else if (!this.levelStart && window.currentLevel == 0) {
+
+            //0
+            if(this.tutorialStep == 0) {
+                this.playerClock = this.time.delayedCall(1000, () => {
+                    this.tutorialStep += 1;
+                }, null, this)
+                this.tutorialStep += 1;
+            }
+
+            //1
+            else if (this.tutorialStep == 1) {
+                this.player.x = -((this.playerClock.delay-this.playerClock.elapsed)/10)*3;
+            }
+
+            //2
+            else if(this.tutorialStep == 2) {
+                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Time to psych myself up for the sales day."),
+                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "I'll practice my pitch in front of the mirror."),
+                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
+                this.tutorialStep += 1;
+            }
+
+            //3
+            else if(this.tutorialStep == 3 && Phaser.Input.Keyboard.JustDown(keyW)){
+                _.each(this.tutorialText, function(entry) {
+                    entry.y = 1000;
+                })
+                this.customerClock = this.time.delayedCall(1000, () => {
+                    this.tutorialStep += 1;
+                }, null, this)
+                this.tutorialStep += 1;
+            }
+
+            //4
+            else if (this.tutorialStep == 4) {
+                this.customer.x = ((this.customerClock.delay-this.customerClock.elapsed)/10)*3;
+            }
+
+            //5
+            else if (this.tutorialStep == 5) {
+                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the customer."),
+                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "If I tell them what they want to hear, they'll buy my product."),
+                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
+                this.tutorialStep += 1;
+            }
+
+            //6
+            else if(this.tutorialStep == 6 && Phaser.Input.Keyboard.JustDown(keyW)){
+                _.each(this.tutorialText, function(entry) {
+                    entry.y = 1000;
+                })
+                this.lockClock = this.time.delayedCall(1000, () => {
+                    this.tutorialStep += 1;
+                }, null, this)
+                this.lastElapsed = 0;
+                this.tutorialStep += 1;
+            }
+
+            //7
+            else if (this.tutorialStep == 7) {
+                window.lockYdrift = (this.lockClock.elapsed - this.lastElapsed)/5;
+                _.each(this.lockGroup, function(entry) {
+                    entry.y += window.lockYdrift;
+                })
+                this.lastElapsed = this.lockClock.elapsed;
+            }
+
+            //8
+            else if (this.tutorialStep == 8) {
+                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the CONVO LOCK. Each pin represents a different topic."),
+                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Once I press the pins in the right order, I'll close the sale."),
+                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
+                this.tutorialStep += 1;
+            }
+
+            //9
+            else if(this.tutorialStep == 9 && Phaser.Input.Keyboard.JustDown(keyW)){
+                _.each(this.tutorialText, function(entry) {
+                    entry.y = 1000;
+                })
+                
+                // show the correct order of symbols
+                this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
+                this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+
+                // create the player's order of symbols
+                this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
+                this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+                this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
+                
+                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "The customer tells me what order I need to press the pins in."),
+                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Use A and D to move the selector, and W to press the pin.")];
+
+                this.levelStart = true;
+                this.tutorialStep += 1;
+            }
 
         } else if (!this.gameOver){
 
-            //run down the timer
-            this.timerLeft.text = Math.round((this.clock.delay-this.clock.elapsed)/1000)
+            if(window.currentLevel > 0)
+            {
+                //run down the timer
+                this.timerLeft.text = Math.round((this.clock.delay-this.clock.elapsed)/1000);
+            }
 
             //test
             if(Phaser.Input.Keyboard.JustDown(keyS)) {
@@ -263,19 +395,104 @@ class Play extends Phaser.Scene {
             }
 
         }else{
-            if(this.win){
-                window.currentLevel += 1;
-            }
-            if(window.currentLevel == 6) {
-                this.scene.start("menuScene");
+            if(window.currentLevel == 0){
+                //post-level tutorial
+
+                //10
+                if(this.tutorialStep == 10) {
+                    _.each(this.tutorialText, function(entry) {
+                        entry.y = 1000;
+                    })
+                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Good job. Later levels will have 3 things to watch out for."),
+                                        this.add.text(game.config.width/4, borderUISize*6 - borderPadding, "Press W to continue")];
+                    this.tutorialStep += 1;
+                }
+                
+                //11
+                else if(this.tutorialStep == 11 && Phaser.Input.Keyboard.JustDown(keyW)){
+                    _.each(this.tutorialText, function(entry) {
+                        entry.y = 1000;
+                    })
+                    this.exampleClock = this.time.delayedCall(4000, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
+                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "1. The lock will be covered 8 seconds after the level begins.");
+                    this.lockCover.depth = 1000;
+                    this.tutorialStep += 1;
+                }
+
+                //12
+                else if(this.tutorialStep == 12) {
+                    this.lockCover.y = this.yOffset+Math.round((this.exampleClock.delay-this.exampleClock.elapsed)/10)*2;
+                }
+
+                //13
+                else if(this.tutorialStep == 13){
+                    this.pinClock = this.time.delayedCall(4000, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
+                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "2. You'll lose progress is if you incorrectly guess too often.");
+                    this.tutorialStep += 1;
+                }
+
+                //14
+                else if(this.tutorialStep == 14) {
+                    if(this.pinClock.elapsed > 1000){ //1001 - 3999   0001 - 2999    0.002 - 5.998
+                        this.tutorialEmoteEraser = 5-Math.floor((this.pinClock.elapsed-1000)/500);
+                        this.emotePlayers[this.tutorialEmoteEraser].y = 1000;
+                    }
+                }
+                
+                //15
+                else if(this.tutorialStep == 15){
+                    this.timerClock = this.time.delayedCall(4000, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
+                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*7 - borderPadding, "3. Each level will have a time limit.");
+                    this.playerBubble.y = 1000;
+                    this.tutorialStep += 1;
+                }
+
+                //16
+                else if(this.tutorialStep == 16) {
+                    this.timerGraphic.y = borderUISize - 188-100+Math.min(100,this.timerClock.elapsed/10);
+                    this.timerLeft.y = borderUISize - borderPadding-100+Math.min(100,this.timerClock.elapsed/10);
+                    this.timerLeft.text = 56+Math.round((this.timerClock.delay-this.timerClock.elapsed)/1000);
+                }
+
+                //17
+                else if(this.tutorialStep == 17) {
+                    this.emoteSpeechs = [this.emoteSpeechA, this.emoteSpeechB, this.emoteSpeechC, this.emoteSpeechD, this.emoteSpeechE, this.emoteSpeechF];
+                    _.each(this.emoteSpeechs, function(entry) {
+                        entry.y = 1000;
+                    })
+                    this.tutorialText = this.add.text(game.config.width/4, borderUISize*9 - borderPadding, "Press W to go to the next level");
+                    this.customerBubble.y = 1000;
+                    this.tutorialStep += 1;
+                }
+
+                //18
+                else if(this.tutorialStep == 18 && Phaser.Input.Keyboard.JustDown(keyW)){
+                    window.currentLevel += 1;
+                    this.scene.start("playScene");
+                }                
+
+
             }
             else
             {
-                this.scene.start("playScene");
+                if(this.win){
+                    window.currentLevel += 1;
+                }
+                if(window.currentLevel == 6) {
+                    this.scene.start("menuScene");
+                }
+                else
+                {
+                    this.scene.start("playScene");
+                }
             }
         }
-
-        
     }
 
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

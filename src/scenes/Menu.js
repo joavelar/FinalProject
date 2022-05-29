@@ -13,9 +13,9 @@ class Menu extends Phaser.Scene {
     }
     create() {
 
-        this.add.text(200/2, 200, "This game is about getting pins into the right spot.");
-        this.add.text(200/2, 230, "To fit into the conversation that you are having.");
-        this.add.text(200/2, 260, "Use (w) to move pins up, use (a),(d) to move between pins.");
+        this.add.text(200/2, 200, "The Lockpicking Salesman Game");
+        this.add.text(200/2, 230, "Based on the prompt: Fitting");
+        this.add.text(200/2, 260, "Press W to continue");
 
 
         //define the w key
