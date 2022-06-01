@@ -16,7 +16,7 @@ class Menu extends Phaser.Scene {
         this.add.text(200/2, 200, "The Lockpicking Salesman Game");
         this.add.text(200/2, 230, "Based on the prompt: Fitting");
         this.add.text(200/2, 260, "Press W to continue");
-        this.add.text(200/2, 260, "Press S to see credits");
+        this.add.text(200/2, 290, "Press S to see credits");
 
 
         //define the s key
