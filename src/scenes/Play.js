@@ -356,6 +356,7 @@ class Play extends Phaser.Scene {
                 this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
                 this.emotePins[this.pointerPos].y = this.driverPinY[this.pointerPos]-14;
                 this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
+                this.pointer.y = this.pointerY - 30;
                 //set the pin if it's the right one
                 if (this.pointerPos == this.pinOrder[this.currentStep]) {
                     this.sound.play('sfx_TrueClick');
@@ -386,7 +387,7 @@ class Play extends Phaser.Scene {
                         this.wrong = 0;
                         console.log("wrong: ",this.wrong);
                         this.currentStep -= 1;
-                        let n = this.pinOrder[this.currentStep]; //[5,2,0,4,1,3]
+                        let n = this.pinOrder[this.currentStep];
                         this.setPins[n] = false;
                         this.emotePlayers[this.currentStep].y = 1000
                     }
@@ -398,6 +399,9 @@ class Play extends Phaser.Scene {
             //pin drop
             for(let i = 0; i < this.keyPins.length; i++)
             {
+                if(this.pointer.y != 150){
+                    this.pointer.y += .75;
+                }
                 if(this.keyPins[i].y < this.keyPinY[i]) {
                     this.keyPins[i].y += .75;
                 }
