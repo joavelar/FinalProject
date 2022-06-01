@@ -1,9 +1,9 @@
-//Title: Crypt Crawler
+//Title: Convo
 //Authors: Tomas Hickman, Jose Velarde-Ruiz, Jonathan Hung
-//Date Completed: 5/2/2022
-//Creative Tilt: Dark Fantasy inspired endless runner where players can aim and attack monsters
-//, or change lanes to evade the monsters until they die. 
-// very proud of getting mouse aim to work, and making the song sound nice
+//Date Completed: 6/6/2022
+//Creative Tilt: A lock picking salesman game where the player has to fit the correct dialogue in order to persuade a customer
+//, if the player guesses incorrectly too much, their progress is undone one at a time
+// 
 
 let config = {
     type: Phaser.CANVAS,

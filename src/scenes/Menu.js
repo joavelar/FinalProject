@@ -16,10 +16,12 @@ class Menu extends Phaser.Scene {
         this.add.text(200/2, 200, "The Lockpicking Salesman Game");
         this.add.text(200/2, 230, "Based on the prompt: Fitting");
         this.add.text(200/2, 260, "Press W to continue");
+        this.add.text(200/2, 260, "Press S to see credits");
 
 
-        //define the w key
+        //define the s key
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
+        keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
 
         //placeholder skip past menu into playscene
         //this.scene.start("playScene");
@@ -31,6 +33,9 @@ class Menu extends Phaser.Scene {
         //press w to start game
         if(Phaser.Input.Keyboard.JustDown(keyW)){
             this.scene.start("playScene");
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyS)){
+            this.scene.start("creditScene");
         }
 
     }
