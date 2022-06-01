@@ -5,6 +5,7 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('lock body', './asset/images/Lock_Body.png');
+        this.load.image('lock pick', './asset/images/Lock_Pick.png');
         this.load.image('lock cover', './asset/images/Lock_Cover.png');
         this.load.image('key pin 1', './asset/images/Key_Pin_1.png');
         this.load.image('driver pin 1', './asset/images/Driver_Pin_1.png');
@@ -111,7 +112,8 @@ class Play extends Phaser.Scene {
         this.pointerY = 130+this.yOffset;
         this.pointerPos = 0;
         // old pointer color was 0x767676, briefly changed it to red for visibility
-        this.pointer = this.add.rectangle(this.pointerX[this.pointerPos], this.pointerY, 5, 10, 0xFF0000).setOrigin(0, 0);
+        //this.pointer = this.add.rectangle(this.pointerX[this.pointerPos], this.pointerY, 5, 10, 0xFF0000).setOrigin(0, 0);
+        this.pointer = this.add.tileSprite(this.pointerX[this.pointerPos]-20, this.pointerY, 720, 120, 'lock pick').setOrigin(0, 0);
 
         //add lock body and pins
         this.lockBody = this.add.tileSprite(100, 0+this.yOffset, 720, 480, 'lock body').setOrigin(0, 0);
