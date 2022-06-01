@@ -19,8 +19,18 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
         this.load.image('customer bubble', './asset/images/flipped_small_bubble.png')
         this.load.image('player bubble', './asset/images/small_bubble.png')
+        this.load.image('sky', './asset/images/Level_background.png')
+        this.load.image('c1', './asset/images/Cloud_1.png')
+        this.load.image('c2', './asset/images/Cloud_2.png')
     }
     create() {
+        //BG 
+        this.sky = this.add.tileSprite(0,0,720,480,'sky').setOrigin(0,0);
+        this.sky.depth = -1;
+        this.cloud2 = this.add.tileSprite(0,-200,720,480,'c2').setOrigin(0,0);
+        this.cloud1 = this.add.tileSprite(0,-125,720,480,'c1').setOrigin(0,0);
+
+
         console.log(window.currentLevel);
 
         //game over flag
@@ -181,6 +191,9 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        this.cloud1.tilePositionX += 1.5;
+        this.cloud2.tilePositionX += 0.5;
+
         //stop if gameOver is true or level hasn't started
         if(!this.levelStart && window.currentLevel > 0){
 
