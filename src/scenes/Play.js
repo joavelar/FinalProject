@@ -399,7 +399,7 @@ class Play extends Phaser.Scene {
             //pin drop
             for(let i = 0; i < this.keyPins.length; i++)
             {
-                if(this.pointer.y != 150){
+                if(this.pointer.y <= 150){
                     this.pointer.y += .75;
                 }
                 if(this.keyPins[i].y < this.keyPinY[i]) {
