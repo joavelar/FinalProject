@@ -19,16 +19,49 @@ class Menu extends Phaser.Scene {
     create() {
         //All image assets
         this.bg = this.add.tileSprite(0,0,720,480,'menuBg').setOrigin(0,0);
-        this.title = this.add.tileSprite(game.config.width/2,70,344,93,'title');
+        this.title = this.add.tileSprite(game.config.width/2,-70,344,93,'title');
         this.sub = this.add.tileSprite(game.config.width/2,150,287,35,'subtitle');
+        this.sub.alpha = 0;
         this.play = this.add.tileSprite(game.config.width/2,300,324,58,'playbutton');
+        this.play.alpha = 0;
         this.cred = this.add.tileSprite(game.config.width/2,360,324,58,'creditbutton');
+        this.cred.alpha = 0;
 
         //this.add.text(200/2, 200, "The Lockpicking Salesman Game");
         //this.add.text(200/2, 230, "Based on the prompt: Fitting");
         //this.add.text(200/2, 260, "Press W to continue");
         //this.add.text(200/2, 290, "Press S to see credits");
 
+        let titletween = this.tweens.add({
+            targets: this.title,
+            y: 70,
+            ease: 'Bounce.easeOut',
+            duration: 2500,
+        });
+
+        let subtween = this.tweens.add({
+            targets: this.sub,
+            alpha: 1,
+            ease: 'Power1',
+            duration: 2500,
+            delay: 2000,
+        });
+
+        let playtween = this.tweens.add({
+            targets: this.play,
+            alpha: 1,
+            ease: 'Power1',
+            duration: 2500,
+            delay: 4000,
+        });
+
+        let credtween = this.tweens.add({
+            targets: this.cred,
+            alpha: 1,
+            ease: 'Power1',
+            duration: 2500,
+            delay: 4000,
+        });
 
         //define the s key
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
