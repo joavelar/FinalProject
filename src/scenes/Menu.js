@@ -9,6 +9,8 @@ class Menu extends Phaser.Scene {
         this.load.image('playbutton', './asset/images/titleScreen/PlayButton.png');
         this.load.image('creditbutton', './asset/images/titleScreen/CreditButton.png');
         this.load.image('menuBg', './asset/images/titleScreen/MenuBackground.png');
+        this.load.image('playbuttonS', './asset/images/titleScreen/PlayButtonSelect.png');
+        this.load.image('creditbuttonS', './asset/images/titleScreen/CreditButtonSelect.png');
 
         //load all the audio elements
         this.load.audio('sfx_LoosePin', './asset/sound/Loose_Pin.wav');
@@ -27,11 +29,7 @@ class Menu extends Phaser.Scene {
         this.cred = this.add.tileSprite(game.config.width/2,360,324,58,'creditbutton');
         this.cred.alpha = 0;
 
-        //this.add.text(200/2, 200, "The Lockpicking Salesman Game");
-        //this.add.text(200/2, 230, "Based on the prompt: Fitting");
-        //this.add.text(200/2, 260, "Press W to continue");
-        //this.add.text(200/2, 290, "Press S to see credits");
-
+        //Animation tweens for the menu assets
         let titletween = this.tweens.add({
             targets: this.title,
             y: 70,
@@ -69,6 +67,9 @@ class Menu extends Phaser.Scene {
 
         //placeholder skip past menu into playscene
         //this.scene.start("playScene");
+
+        this.play.inputEnabled = true;
+        this.cred.inputEnabled = true;
 
         //keep track of levels
         window.currentLevel = 0;
