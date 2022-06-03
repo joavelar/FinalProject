@@ -3,7 +3,13 @@ class Credit extends Phaser.Scene {
         super("creditScene")
     }
     preload(){
-        //load menu image
+        //load images
+        this.load.image('bg', './asset/images/creditScreen/CreditBackground.png');
+        this.load.image('title', './asset/images/titleScreen/Title.png');
+        this.load.image('credit', './asset/images/creditScreen/Credits.png');
+        this.load.image('return', './asset/images/creditScreen/Return.png');
+        this.load.image('thank', './asset/images/creditScreen/Thank.png');
+
 
         //load all the audio elements
         this.load.audio('sfx_LoosePin', './asset/sound/Loose_Pin.wav');
@@ -12,12 +18,43 @@ class Credit extends Phaser.Scene {
         this.load.audio('sfx_Serrated', './asset/sound/Serrated_Click.wav');
     }
     create() {
+        //load images
+        this.bg = this.add.tileSprite(0,0,720,480,'bg').setOrigin(0,0);
+        this.title = this.add.tileSprite(game.config.width/2,-70,344,93,'title');
+        this.credit = this.add.tileSprite(game.config.width/2,-80,424,155,'credit');
+        this.thank = this.add.tileSprite(game.config.width/2,340,164,88,'thank');
+        this.thank.alpha = 0;
+        this.return = this.add.tileSprite(game.config.width/2,420,276,20,'return');
+        this.return.alpha = 0;
 
-        this.add.text(200/2, 200, "Convo");
-        this.add.text(200/2, 230, "Coder/Programming - Jose Velarde-Ruiz");
-        this.add.text(200/2, 260, "Sound Designer/Secondary Coder - Tomas Hickman");
-        this.add.text(200/2, 290, "Artist/Secondary Coder - Jonathan Hung");
-        this.add.text(200/2, 320, "Press W to go back to the main menu");
+        //Animation tweens for the menu assets
+        let titletween = this.tweens.add({
+            targets: this.title,
+            y: 70,
+            ease: 'Bounce.easeOut',
+            duration: 2500,
+        });
+        let credittween = this.tweens.add({
+            targets: this.credit,
+            y: 200,
+            ease: 'Power1',
+            duration: 3500,
+            delay: 2000,
+        });
+        let thanktween = this.tweens.add({
+            targets: this.thank,
+            alpha: 1,
+            ease: 'Power1',
+            duration: 3500,
+            delay: 4000,
+        });
+        let returntween = this.tweens.add({
+            targets: this.return,
+            alpha: 1,
+            ease: 'Power1',
+            duration: 3500,
+            delay: 6000,
+        });
 
 
         //define the w key

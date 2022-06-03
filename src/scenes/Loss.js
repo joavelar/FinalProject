@@ -3,7 +3,7 @@ class Loss extends Phaser.Scene {
         super("levelLoss")
     }
     preload(){
-        //load menu image
+        //load image
 
         //load all the audio elements
         this.load.audio('sfx_LoosePin', './asset/sound/Loose_Pin.wav');
@@ -13,11 +13,7 @@ class Loss extends Phaser.Scene {
     }
     create() {
 
-        this.add.text(200/2, 200, "Convo");
-        this.add.text(200/2, 230, "Coder/Programming - Jose Velarde-Ruiz");
-        this.add.text(200/2, 260, "Sound Designer/Secondary Coder - Tomas Hickman");
-        this.add.text(200/2, 290, "Artist/Secondary Coder - Jonathan Hung");
-        this.add.text(200/2, 320, "Press W to go back to the main menu");
+
 
 
         //define the w key
