@@ -18,8 +18,8 @@ class Play extends Phaser.Scene {
         this.load.image('customer 5', './asset/images/Level_5_person.png')
         this.load.image('customer 6', './asset/images/Level_6_person.png')
         this.load.spritesheet('emotes', 'asset/images/Pin_Emotes_Spritesheet.png', { frameWidth: 24, frameHeight: 24 });
-        this.load.image('customer bubble', './asset/images/flipped_small_bubble.png')
-        this.load.image('player bubble', './asset/images/small_bubble.png')
+        this.load.image('customer bubble', './asset/images/Flipped_Small_Bubble.png')
+        this.load.image('player bubble', './asset/images/Small_Bubble.png')
         this.load.image('sky', './asset/images/Level_background.png')
         this.load.image('c1', './asset/images/Cloud_1.png')
         this.load.image('c2', './asset/images/Cloud_2.png')
