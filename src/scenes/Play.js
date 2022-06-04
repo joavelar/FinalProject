@@ -184,12 +184,17 @@ class Play extends Phaser.Scene {
                               this.emotePinA, this.emotePinB, this.emotePinC, this.emotePinD, this.emotePinE, this.emotePinF];
             
             _.each(this.lockGroup, function(entry) {
-                entry.y -= 200;
+                entry.y -= 300;
             })
             this.timerGraphic.y -= 100;
             this.timerLeft.y -= 100;
             this.tutorialStep = 0;
         }
+
+        //play music
+        this.musicLoop = this.sound.add('music');
+        this.musicLoop.loop = true;
+        this.musicLoop.play();
     }
 
     update() {
@@ -258,7 +263,7 @@ class Play extends Phaser.Scene {
                 _.each(this.tutorialText, function(entry) {
                     entry.y = 1000;
                 })
-                this.lockClock = this.time.delayedCall(1000, () => {
+                this.lockClock = this.time.delayedCall(1500, () => {
                     this.tutorialStep += 1;
                 }, null, this)
                 this.lastElapsed = 0;
@@ -339,17 +344,8 @@ class Play extends Phaser.Scene {
                 this.sound.play('sfx_Switch');
                 this.pointerPos --;
             }
-            this.pointer.x = this.pointerX[this.pointerPos];
+            this.pointer.x = this.pointerX[this.pointerPos]-20;
 
-        
-            //move pointer
-            if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
-                this.pointerPos ++;
-            }
-            else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
-                this.pointerPos --;
-            }
-            this.pointer.x = this.pointerX[this.pointerPos];
             
             //bump pin
             if(Phaser.Input.Keyboard.JustDown(keyW)) {
@@ -493,6 +489,7 @@ class Play extends Phaser.Scene {
                 //18
                 else if(this.tutorialStep == 18 && Phaser.Input.Keyboard.JustDown(keyW)){
                     window.currentLevel += 1;
+                    this.musicLoop.stop();
                     this.scene.start("playScene");
                 }                
 
@@ -500,6 +497,7 @@ class Play extends Phaser.Scene {
             }
             else
             {
+                this.musicLoop.stop();
                 if(this.win){
                     window.currentLevel += 1;
                 }

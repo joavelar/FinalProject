@@ -17,6 +17,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('sfx_Switch', './asset/sound/Switch_Selection.wav');
         this.load.audio('sfx_TrueClick', './asset/sound/True_Click.wav');
         this.load.audio('sfx_Serrated', './asset/sound/Serrated_Click.wav');
+        this.load.audio('music', './asset/sound/background music.mp3')
     }
     create() {
         //All image assets
