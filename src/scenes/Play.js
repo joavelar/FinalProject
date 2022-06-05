@@ -26,6 +26,10 @@ class Play extends Phaser.Scene {
         this.load.image('spark','./asset/images/FX/spark.png')
     }
     create() {
+        //key for Menu scene
+        keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+        //lose condition
+        this.loseCondition = false;
         //BG 
         this.sky = this.add.tileSprite(0,0,720,480,'sky').setOrigin(0,0);
         this.sky.depth = -1;
@@ -108,6 +112,10 @@ class Play extends Phaser.Scene {
                 this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
                     this.gameOver = true; // once timer runs it means game over
                     this.gameLive = false;
+                    this.loseCondition = true; //this will only happen if and only if the timer runs out which is the only lose condition
+                    this.musicLoop.stop();
+                    this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "You ran out of time, you lose.");
+                    this.add.text(game.config.width/3, borderUISize*5 - borderPadding+15, "Press M to go to menu.");
                 }, null, this)
             }, null, this)
         }
@@ -230,320 +238,326 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.cloud1.tilePositionX += 1.5;
-        this.cloud2.tilePositionX += 0.5;
+        if(!this.loseCondition){
+            this.cloud1.tilePositionX += 1.5;
+            this.cloud2.tilePositionX += 0.5;
 
-        //stop if gameOver is true or level hasn't started
-        if(!this.levelStart && window.currentLevel > 0){
+            //stop if gameOver is true or level hasn't started
+            if(!this.levelStart && window.currentLevel > 0){
 
-            //keep timer frozen
-            this.timerLeft.text = this.timerLength;
+                //keep timer frozen
+                this.timerLeft.text = this.timerLength;
 
-            //move lock cover towards lock
-            this.lockCover.y = this.yOffset+Math.round((this.preClock.delay-this.preClock.elapsed)/10);
+                //move lock cover towards lock
+                this.lockCover.y = this.yOffset+Math.round((this.preClock.delay-this.preClock.elapsed)/10);
 
-        //tutorial sequence
-        }else if (!this.levelStart && window.currentLevel == 0) {
+            //tutorial sequence
+            }else if (!this.levelStart && window.currentLevel == 0) {
 
-            //0
-            if(this.tutorialStep == 0) {
-                this.playerClock = this.time.delayedCall(1000, () => {
+                //0
+                if(this.tutorialStep == 0) {
+                    this.playerClock = this.time.delayedCall(1000, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
                     this.tutorialStep += 1;
-                }, null, this)
-                this.tutorialStep += 1;
-            }
+                }
 
-            //1
-            else if (this.tutorialStep == 1) {
-                this.player.x = -((this.playerClock.delay-this.playerClock.elapsed)/10)*3;
-            }
+                //1
+                else if (this.tutorialStep == 1) {
+                    this.player.x = -((this.playerClock.delay-this.playerClock.elapsed)/10)*3;
+                }
 
-            //2
-            else if(this.tutorialStep == 2) {
-                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Time to psych myself up for the sales day."),
-                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "I'll practice my pitch in front of the mirror."),
-                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
-                this.tutorialStep += 1;
-            }
-
-            //3
-            else if(this.tutorialStep == 3 && Phaser.Input.Keyboard.JustDown(keyW)){
-                _.each(this.tutorialText, function(entry) {
-                    entry.y = 1000;
-                })
-                this.customerClock = this.time.delayedCall(1000, () => {
+                //2
+                else if(this.tutorialStep == 2) {
+                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Time to psych myself up for the sales day."),
+                                        this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "I'll practice my pitch in front of the mirror."),
+                                        this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
                     this.tutorialStep += 1;
-                }, null, this)
-                this.tutorialStep += 1;
-            }
+                }
 
-            //4
-            else if (this.tutorialStep == 4) {
-                this.customer.x = ((this.customerClock.delay-this.customerClock.elapsed)/10)*3;
-            }
-
-            //5
-            else if (this.tutorialStep == 5) {
-                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the customer."),
-                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "If I tell them what they want to hear, they'll buy my product."),
-                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
-                this.tutorialStep += 1;
-            }
-
-            //6
-            else if(this.tutorialStep == 6 && Phaser.Input.Keyboard.JustDown(keyW)){
-                _.each(this.tutorialText, function(entry) {
-                    entry.y = 1000;
-                })
-                this.lockClock = this.time.delayedCall(1500, () => {
+                //3
+                else if(this.tutorialStep == 3 && Phaser.Input.Keyboard.JustDown(keyW)){
+                    _.each(this.tutorialText, function(entry) {
+                        entry.y = 1000;
+                    })
+                    this.customerClock = this.time.delayedCall(1000, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
                     this.tutorialStep += 1;
-                }, null, this)
-                this.lastElapsed = 0;
-                this.tutorialStep += 1;
-            }
+                }
 
-            //7
-            else if (this.tutorialStep == 7) {
-                window.lockYdrift = (this.lockClock.elapsed - this.lastElapsed)/5;
-                _.each(this.lockGroup, function(entry) {
-                    entry.y += window.lockYdrift;
-                })
-                this.lastElapsed = this.lockClock.elapsed;
-            }
+                //4
+                else if (this.tutorialStep == 4) {
+                    this.customer.x = ((this.customerClock.delay-this.customerClock.elapsed)/10)*3;
+                }
 
-            //8
-            else if (this.tutorialStep == 8) {
-                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the CONVO LOCK. Each pin represents a different topic."),
-                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Once I press the pins in the right order, I'll close the sale."),
-                                    this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
-                this.tutorialStep += 1;
-            }
+                //5
+                else if (this.tutorialStep == 5) {
+                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the customer."),
+                                        this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "If I tell them what they want to hear, they'll buy my product."),
+                                        this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
+                    this.tutorialStep += 1;
+                }
 
-            //9
-            else if(this.tutorialStep == 9 && Phaser.Input.Keyboard.JustDown(keyW)){
-                _.each(this.tutorialText, function(entry) {
-                    entry.y = 1000;
-                })
+                //6
+                else if(this.tutorialStep == 6 && Phaser.Input.Keyboard.JustDown(keyW)){
+                    _.each(this.tutorialText, function(entry) {
+                        entry.y = 1000;
+                    })
+                    this.lockClock = this.time.delayedCall(1500, () => {
+                        this.tutorialStep += 1;
+                    }, null, this)
+                    this.lastElapsed = 0;
+                    this.tutorialStep += 1;
+                }
+
+                //7
+                else if (this.tutorialStep == 7) {
+                    window.lockYdrift = (this.lockClock.elapsed - this.lastElapsed)/5;
+                    _.each(this.lockGroup, function(entry) {
+                        entry.y += window.lockYdrift;
+                    })
+                    this.lastElapsed = this.lockClock.elapsed;
+                }
+
+                //8
+                else if (this.tutorialStep == 8) {
+                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "This is the CONVO LOCK. Each pin represents a different topic."),
+                                        this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Once I press the pins in the right order, I'll close the sale."),
+                                        this.add.text(game.config.width/4, borderUISize*8 - borderPadding, "Press W to continue")];
+                    this.tutorialStep += 1;
+                }
+
+                //9
+                else if(this.tutorialStep == 9 && Phaser.Input.Keyboard.JustDown(keyW)){
+                    _.each(this.tutorialText, function(entry) {
+                        entry.y = 1000;
+                    })
+                    
+                    // show the correct order of symbols
+                    this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
+                    this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                    this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                    this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                    this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                    this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                    this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+
+                    // create the player's order of symbols
+                    this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
+                    this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
+                    this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
+                    this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
+                    this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
+                    this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
+                    this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
+                    this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
+                    
+                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "The customer tells me what order I need to press the pins in."),
+                                        this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Use A and D to move the selector, and W to press the pin.")];
+                    
+                    this.levelStart = true;
+                    this.gameLive = true;
+                    this.tutorialStep += 1;
+                }
+
+            } else if (!this.gameOver){
+
+                if(window.currentLevel > 0)
+                {
+                    //run down the timer
+                    this.timerLeft.text = Math.round((this.clock.delay-this.clock.elapsed)/1000);
+                }
+
+                //test
+                if(Phaser.Input.Keyboard.JustDown(keyS)) {
+                    console.log("pointrPos: " + this.pointerPos);
+                    console.log("currentStep: " + this.currentStep);
+                    console.log("pinOrder: " +  this.pinOrder);
+                    console.log("setPins: " + this.setPins);
+                }
+
+                //move pointer
+                if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
+                    this.sound.play('sfx_Switch');
+                    this.pointerPos ++;
+                }
+                else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
+                    this.sound.play('sfx_Switch');
+                    this.pointerPos --;
+                }
+                this.pointer.x = this.pointerX[this.pointerPos]-20;
+
                 
-                // show the correct order of symbols
-                this.customerBubble = this.add.tileSprite(190, 280, 360, 90, 'customer bubble').setOrigin(0, 0);
-                this.emoteSpeechA = this.add.image(240, 300, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
-                this.emoteSpeechB = this.add.image(290, 300, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
-                this.emoteSpeechC = this.add.image(340, 300, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
-                this.emoteSpeechD = this.add.image(390, 300, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
-                this.emoteSpeechE = this.add.image(440, 300, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
-                this.emoteSpeechF = this.add.image(490, 300, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
-
-                // create the player's order of symbols
-                this.playerBubble = this.add.tileSprite(100, 220, 360, 90, 'player bubble').setOrigin(0, 0);
-                this.emotePlayerA = this.add.image(140, 1000, 'emotes', this.levelEmotes[this.pinOrder[0]]).setOrigin(0, 0);
-                this.emotePlayerB = this.add.image(190, 1000, 'emotes', this.levelEmotes[this.pinOrder[1]]).setOrigin(0, 0);
-                this.emotePlayerC = this.add.image(240, 1000, 'emotes', this.levelEmotes[this.pinOrder[2]]).setOrigin(0, 0);
-                this.emotePlayerD = this.add.image(290, 1000, 'emotes', this.levelEmotes[this.pinOrder[3]]).setOrigin(0, 0);
-                this.emotePlayerE = this.add.image(340, 1000, 'emotes', this.levelEmotes[this.pinOrder[4]]).setOrigin(0, 0);
-                this.emotePlayerF = this.add.image(390, 1000, 'emotes', this.levelEmotes[this.pinOrder[5]]).setOrigin(0, 0);
-                this.emotePlayers = [this.emotePlayerA, this.emotePlayerB, this.emotePlayerC, this.emotePlayerD, this.emotePlayerE, this.emotePlayerF]
-                
-                this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "The customer tells me what order I need to press the pins in."),
-                                    this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Use A and D to move the selector, and W to press the pin.")];
-                
-                this.levelStart = true;
-                this.gameLive = true;
-                this.tutorialStep += 1;
-            }
-
-        } else if (!this.gameOver){
-
-            if(window.currentLevel > 0)
-            {
-                //run down the timer
-                this.timerLeft.text = Math.round((this.clock.delay-this.clock.elapsed)/1000);
-            }
-
-            //test
-            if(Phaser.Input.Keyboard.JustDown(keyS)) {
-                console.log("pointrPos: " + this.pointerPos);
-                console.log("currentStep: " + this.currentStep);
-                console.log("pinOrder: " +  this.pinOrder);
-                console.log("setPins: " + this.setPins);
-            }
-
-            //move pointer
-            if(Phaser.Input.Keyboard.JustDown(keyD) && this.pointerPos < this.pointerX.length-1) {
-                this.sound.play('sfx_Switch');
-                this.pointerPos ++;
-            }
-            else if (Phaser.Input.Keyboard.JustDown(keyA) && this.pointerPos > 0) {
-                this.sound.play('sfx_Switch');
-                this.pointerPos --;
-            }
-            this.pointer.x = this.pointerX[this.pointerPos]-20;
-
-            
-            //bump pin
-            if(Phaser.Input.Keyboard.JustDown(keyW)) {
-                this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
-                this.emotePins[this.pointerPos].y = this.driverPinY[this.pointerPos]-14;
-                this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
-                this.pointer.y = this.pointerY - 30;
-                //set the pin if it's the right one
-                if (this.pointerPos == this.pinOrder[this.currentStep]) {
-                    this.correctPin = true;
-                    this.sound.play('sfx_TrueClick');
-                    console.log("pin set!")
-                    this.setPins[this.pointerPos] = true;
-                    this.emotePlayers[this.currentStep].y = 240;
-                    this.currentStep ++;
-                    console.log(this.gameOver);
-                    //reset wrong counter
-                    this.wrong = 0;
-
-                    //win the game
-                    if(this.currentStep == 6) {
-                        this.gameOver = true; //  for now we want it to end here
-                        this.win = true;
+                //bump pin
+                if(Phaser.Input.Keyboard.JustDown(keyW)) {
+                    this.keyPins[this.pointerPos].y = this.keyPinY[this.pointerPos]-16;
+                    this.emotePins[this.pointerPos].y = this.driverPinY[this.pointerPos]-14;
+                    this.driverPins[this.pointerPos].y = this.driverPinY[this.pointerPos]-16;
+                    this.pointer.y = this.pointerY - 30;
+                    //set the pin if it's the right one
+                    if (this.pointerPos == this.pinOrder[this.currentStep]) {
+                        this.correctPin = true;
+                        this.sound.play('sfx_TrueClick');
+                        console.log("pin set!")
+                        this.setPins[this.pointerPos] = true;
+                        this.emotePlayers[this.currentStep].y = 240;
+                        this.currentStep ++;
                         console.log(this.gameOver);
-                        this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
-                        //this.create();
-                    }
-                }else{
-                    this.sound.play('sfx_LoosePin');
-                    //add counter
-                    this.wrong += 1;
-                    this.correctPin = false;
-                    console.log("wrong: ",this.wrong);
-                    //check counter is 2 or 0 if so then drop previous pin if any
-                    if((this.currentStep>0) && this.wrong == 2){
-                        console.log("wrong: ",this.wrong);
+                        //reset wrong counter
                         this.wrong = 0;
+
+                        //win the game
+                        if(this.currentStep == 6) {
+                            this.gameOver = true; //  for now we want it to end here
+                            this.win = true;
+                            console.log(this.gameOver);
+                            this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
+                            //this.create();
+                        }
+                    }else{
+                        this.sound.play('sfx_LoosePin');
+                        //add counter
+                        this.wrong += 1;
+                        this.correctPin = false;
                         console.log("wrong: ",this.wrong);
-                        this.currentStep -= 1;
-                        let n = this.pinOrder[this.currentStep];
-                        this.setPins[n] = false;
-                        this.emotePlayers[this.currentStep].y = 1000
+                        //check counter is 2 or 0 if so then drop previous pin if any
+                        if((this.currentStep>0) && this.wrong == 2){
+                            console.log("wrong: ",this.wrong);
+                            this.wrong = 0;
+                            console.log("wrong: ",this.wrong);
+                            this.currentStep -= 1;
+                            let n = this.pinOrder[this.currentStep];
+                            this.setPins[n] = false;
+                            this.emotePlayers[this.currentStep].y = 1000
+                        }
+                    
                     }
-                   
+
                 }
 
-            }
-
-            //pin drop
-            for(let i = 0; i < this.keyPins.length; i++)
-            {
-                if(this.pointer.y <= 150){
-                    this.pointer.y += .75;
-                }
-                if(this.keyPins[i].y < this.keyPinY[i]) {
-                    this.keyPins[i].y += .75;
-                }
-                //driver pin won't drop if it's set
-                if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
-                    this.driverPins[i].y += .75;
-                    this.emotePins[i].y += .75;
-                }
-
-            }
-
-        }else{
-            if(window.currentLevel == 0){
-                //post-level tutorial
-
-                //10
-                if(this.tutorialStep == 10) {
-                    _.each(this.tutorialText, function(entry) {
-                        entry.y = 1000;
-                    })
-                    this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Good job. Later levels will have 3 things to watch out for."),
-                                        this.add.text(game.config.width/4, borderUISize*6 - borderPadding, "Press W to continue")];
-                    this.tutorialStep += 1;
-                }
-                
-                //11
-                else if(this.tutorialStep == 11 && Phaser.Input.Keyboard.JustDown(keyW)){
-                    _.each(this.tutorialText, function(entry) {
-                        entry.y = 1000;
-                    })
-                    this.exampleClock = this.time.delayedCall(4000, () => {
-                        this.tutorialStep += 1;
-                    }, null, this)
-                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "1. The lock will be covered in 8 seconds after the level begins.");
-                    this.gameLive = false;
-                    this.lockCover.depth = 1000;
-                    this.tutorialStep += 1;
-                }
-
-                //12
-                else if(this.tutorialStep == 12) {
-                    this.lockCover.y = this.yOffset+Math.round((this.exampleClock.delay-this.exampleClock.elapsed)/10)*2;
-                }
-
-                //13
-                else if(this.tutorialStep == 13){
-                    this.pinClock = this.time.delayedCall(4000, () => {
-                        this.tutorialStep += 1;
-                    }, null, this)
-                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "2. You'll lose progress is if you incorrectly guess too often.");
-                    this.tutorialStep += 1;
-                }
-
-                //14
-                else if(this.tutorialStep == 14) {
-                    if(this.pinClock.elapsed > 1000){ //1001 - 3999   0001 - 2999    0.002 - 5.998
-                        this.tutorialEmoteEraser = 5-Math.floor((this.pinClock.elapsed-1000)/500);
-                        this.emotePlayers[this.tutorialEmoteEraser].y = 1000;
+                //pin drop
+                for(let i = 0; i < this.keyPins.length; i++)
+                {
+                    if(this.pointer.y <= 150){
+                        this.pointer.y += .75;
                     }
+                    if(this.keyPins[i].y < this.keyPinY[i]) {
+                        this.keyPins[i].y += .75;
+                    }
+                    //driver pin won't drop if it's set
+                    if(this.driverPins[i].y < this.driverPinY[i] && !this.setPins[i]) {
+                        this.driverPins[i].y += .75;
+                        this.emotePins[i].y += .75;
+                    }
+
                 }
-                
-                //15
-                else if(this.tutorialStep == 15){
-                    this.timerClock = this.time.delayedCall(4000, () => {
+
+            }else{
+                if(window.currentLevel == 0){
+                    //post-level tutorial
+
+                    //10
+                    if(this.tutorialStep == 10) {
+                        _.each(this.tutorialText, function(entry) {
+                            entry.y = 1000;
+                        })
+                        this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "Good job. Later levels will have 3 things to watch out for."),
+                                            this.add.text(game.config.width/4, borderUISize*6 - borderPadding, "Press W to continue")];
                         this.tutorialStep += 1;
-                    }, null, this)
-                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*7 - borderPadding, "3. Each level will have a time limit.");
-                    this.playerBubble.y = 1000;
-                    this.tutorialStep += 1;
-                }
+                    }
+                    
+                    //11
+                    else if(this.tutorialStep == 11 && Phaser.Input.Keyboard.JustDown(keyW)){
+                        _.each(this.tutorialText, function(entry) {
+                            entry.y = 1000;
+                        })
+                        this.exampleClock = this.time.delayedCall(4000, () => {
+                            this.tutorialStep += 1;
+                        }, null, this)
+                        this.tutorialText = this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "1. The lock will be covered in 8 seconds after the level begins.");
+                        this.gameLive = false;
+                        this.lockCover.depth = 1000;
+                        this.tutorialStep += 1;
+                    }
 
-                //16
-                else if(this.tutorialStep == 16) {
-                    this.timerGraphic.y = borderUISize - 188-100+Math.min(100,this.timerClock.elapsed/10);
-                    this.timerLeft.y = borderUISize - borderPadding-100+Math.min(100,this.timerClock.elapsed/10);
-                    this.timerLeft.text = 56+Math.round((this.timerClock.delay-this.timerClock.elapsed)/1000);
-                }
+                    //12
+                    else if(this.tutorialStep == 12) {
+                        this.lockCover.y = this.yOffset+Math.round((this.exampleClock.delay-this.exampleClock.elapsed)/10)*2;
+                    }
 
-                //17
-                else if(this.tutorialStep == 17) {
-                    this.emoteSpeechs = [this.emoteSpeechA, this.emoteSpeechB, this.emoteSpeechC, this.emoteSpeechD, this.emoteSpeechE, this.emoteSpeechF];
-                    _.each(this.emoteSpeechs, function(entry) {
-                        entry.y = 1000;
-                    })
-                    this.tutorialText = this.add.text(game.config.width/4, borderUISize*9 - borderPadding, "Press W to go to the next level");
-                    this.customerBubble.y = 1000;
-                    this.tutorialStep += 1;
-                }
+                    //13
+                    else if(this.tutorialStep == 13){
+                        this.pinClock = this.time.delayedCall(4000, () => {
+                            this.tutorialStep += 1;
+                        }, null, this)
+                        this.tutorialText = this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "2. You'll lose progress is if you incorrectly guess too often.");
+                        this.tutorialStep += 1;
+                    }
 
-                //18
-                else if(this.tutorialStep == 18 && Phaser.Input.Keyboard.JustDown(keyW)){
-                    window.currentLevel += 1;
-                    this.musicLoop.stop();
-                    this.scene.start("playScene");
-                }                
+                    //14
+                    else if(this.tutorialStep == 14) {
+                        if(this.pinClock.elapsed > 1000){ //1001 - 3999   0001 - 2999    0.002 - 5.998
+                            this.tutorialEmoteEraser = 5-Math.floor((this.pinClock.elapsed-1000)/500);
+                            this.emotePlayers[this.tutorialEmoteEraser].y = 1000;
+                        }
+                    }
+                    
+                    //15
+                    else if(this.tutorialStep == 15){
+                        this.timerClock = this.time.delayedCall(4000, () => {
+                            this.tutorialStep += 1;
+                        }, null, this)
+                        this.tutorialText = this.add.text(game.config.width/8, borderUISize*7 - borderPadding, "3. Each level will have a time limit.");
+                        this.playerBubble.y = 1000;
+                        this.tutorialStep += 1;
+                    }
+
+                    //16
+                    else if(this.tutorialStep == 16) {
+                        this.timerGraphic.y = borderUISize - 188-100+Math.min(100,this.timerClock.elapsed/10);
+                        this.timerLeft.y = borderUISize - borderPadding-100+Math.min(100,this.timerClock.elapsed/10);
+                        this.timerLeft.text = 56+Math.round((this.timerClock.delay-this.timerClock.elapsed)/1000);
+                    }
+
+                    //17
+                    else if(this.tutorialStep == 17) {
+                        this.emoteSpeechs = [this.emoteSpeechA, this.emoteSpeechB, this.emoteSpeechC, this.emoteSpeechD, this.emoteSpeechE, this.emoteSpeechF];
+                        _.each(this.emoteSpeechs, function(entry) {
+                            entry.y = 1000;
+                        })
+                        this.tutorialText = this.add.text(game.config.width/4, borderUISize*9 - borderPadding, "Press W to go to the next level");
+                        this.customerBubble.y = 1000;
+                        this.tutorialStep += 1;
+                    }
+
+                    //18
+                    else if(this.tutorialStep == 18 && Phaser.Input.Keyboard.JustDown(keyW)){
+                        window.currentLevel += 1;
+                        this.musicLoop.stop();
+                        this.scene.start("playScene");
+                    }                
 
 
-            }
-            else
-            {
-                this.musicLoop.stop();
-                if(this.win){
-                    window.currentLevel += 1;
-                }
-                if(window.currentLevel == 6) {
-                    this.scene.start("menuScene");
                 }
                 else
                 {
-                    this.scene.start("playScene");
+                    this.musicLoop.stop();
+                    if(this.win){
+                        window.currentLevel += 1;
+                    }
+                    if(window.currentLevel == 6) {
+                        this.scene.start("menuScene");
+                    }
+                    else
+                    {
+                        this.scene.start("playScene");
+                    }
                 }
+            }
+        }else{
+            if(Phaser.Input.Keyboard.JustDown(keyM)){
+                this.scene.start("menuScene");
             }
         }
     }
@@ -551,19 +565,21 @@ class Play extends Phaser.Scene {
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     shuffle(array) {
         let currentIndex = array.length,  randomIndex;
-      
+    
         // While there remain elements to shuffle.
         while (currentIndex != 0) {
-      
-          // Pick a remaining element.
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex--;
-      
-          // And swap it with the current element.
-          [array[currentIndex], array[randomIndex]] = [
+    
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+    
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
         }
-      
+    
         return array;
-      }
+    }
+
+        
 }
