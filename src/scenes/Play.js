@@ -23,6 +23,7 @@ class Play extends Phaser.Scene {
         this.load.image('sky', './asset/images/Level_background.png')
         this.load.image('c1', './asset/images/Cloud_1.png')
         this.load.image('c2', './asset/images/Cloud_2.png')
+        this.load.image('spark','./asset/images/FX/spark.png')
     }
     create() {
         //BG 
@@ -30,6 +31,18 @@ class Play extends Phaser.Scene {
         this.sky.depth = -1;
         this.cloud2 = this.add.tileSprite(0,-200,720,480,'c2').setOrigin(0,0);
         this.cloud1 = this.add.tileSprite(0,-125,720,480,'c1').setOrigin(0,0);
+
+        //setting up particle emitters
+        let sparkemitter = this.add.particles('spark').setDepth(2).createEmitter({
+            x: 400,
+            y: 1000,
+            speed: {min: -600, max: 700},
+            angle: {min: 0, max: 360},
+            scale: {start: 0.5, end: 0},
+            blendMode: 'SCREEN',
+            lifespan: 500,
+            gravityY: 700
+        })
 
 
         console.log(window.currentLevel);
@@ -70,6 +83,7 @@ class Play extends Phaser.Scene {
             this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
             this.preClock = this.time.delayedCall(8000, () => {
                 this.levelStart = true; // the lock has been covered and the level timer will begin
+                this.gameLive = true;
                 this.memorizeText.y = 1000;
 
                 // show the correct order of symbols
@@ -195,6 +209,23 @@ class Play extends Phaser.Scene {
         this.musicLoop = this.sound.add('music');
         this.musicLoop.loop = true;
         this.musicLoop.play();
+
+        //game is live boolean
+        this.gameLive = false;
+        this.correctPin = false;
+
+        //play particle effects
+        this.input.keyboard.on('keydown-W', function (pointer){
+            console.log(this.scene.gameLive)
+            if(this.scene.gameLive == true){
+                sparkemitter.setPosition(this.scene.pointerX[this.scene.pointerPos],this.scene.pointerY);
+                sparkemitter.explode(5);
+            }
+            if(this.scene.gameLive == true && this.scene.correctPin == true){
+                sparkemitter.setPosition(this.scene.pointerX[this.scene.pointerPos],this.scene.pointerY);
+                sparkemitter.explode(30);
+            };
+        })
     }
 
     update() {
@@ -314,8 +345,9 @@ class Play extends Phaser.Scene {
                 
                 this.tutorialText = [this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "The customer tells me what order I need to press the pins in."),
                                     this.add.text(game.config.width/8, borderUISize*6 - borderPadding, "Use A and D to move the selector, and W to press the pin.")];
-
+                
                 this.levelStart = true;
+                this.gameLive = true;
                 this.tutorialStep += 1;
             }
 
@@ -355,6 +387,7 @@ class Play extends Phaser.Scene {
                 this.pointer.y = this.pointerY - 30;
                 //set the pin if it's the right one
                 if (this.pointerPos == this.pinOrder[this.currentStep]) {
+                    this.correctPin = true;
                     this.sound.play('sfx_TrueClick');
                     console.log("pin set!")
                     this.setPins[this.pointerPos] = true;
@@ -376,6 +409,7 @@ class Play extends Phaser.Scene {
                     this.sound.play('sfx_LoosePin');
                     //add counter
                     this.wrong += 1;
+                    this.correctPin = false;
                     console.log("wrong: ",this.wrong);
                     //check counter is 2 or 0 if so then drop previous pin if any
                     if((this.currentStep>0) && this.wrong == 2){
@@ -431,7 +465,8 @@ class Play extends Phaser.Scene {
                     this.exampleClock = this.time.delayedCall(4000, () => {
                         this.tutorialStep += 1;
                     }, null, this)
-                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "1. The lock will be covered 8 seconds after the level begins.");
+                    this.tutorialText = this.add.text(game.config.width/8, borderUISize*5 - borderPadding, "1. The lock will be covered in 8 seconds after the level begins.");
+                    this.gameLive = false;
                     this.lockCover.depth = 1000;
                     this.tutorialStep += 1;
                 }
