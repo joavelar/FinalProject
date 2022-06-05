@@ -28,6 +28,7 @@ class Play extends Phaser.Scene {
     create() {
         //key for Menu scene
         keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         //lose condition
         this.loseCondition = false;
         //BG 
@@ -115,7 +116,7 @@ class Play extends Phaser.Scene {
                     this.loseCondition = true; //this will only happen if and only if the timer runs out which is the only lose condition
                     this.musicLoop.stop();
                     this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "You ran out of time, you lose.");
-                    this.add.text(game.config.width/3, borderUISize*5 - borderPadding+15, "Press M to go to menu.");
+                    this.add.text(game.config.width/3, borderUISize*5 - borderPadding+15, "Press M to go to menu, or R to restart level");
                 }, null, this)
             }, null, this)
         }
@@ -558,6 +559,9 @@ class Play extends Phaser.Scene {
         }else{
             if(Phaser.Input.Keyboard.JustDown(keyM)){
                 this.scene.start("menuScene");
+            }
+            if(Phaser.Input.Keyboard.JustDown(keyR)){
+                this.loseCondition = false;
             }
         }
     }
