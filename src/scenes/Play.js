@@ -107,6 +107,7 @@ class Play extends Phaser.Scene {
 
                 this.clock = this.time.delayedCall(this.timerLength * 1000, () => { //setting up the clock
                     this.gameOver = true; // once timer runs it means game over
+                    this.gameLive = false;
                 }, null, this)
             }, null, this)
         }
