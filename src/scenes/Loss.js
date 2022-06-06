@@ -48,7 +48,8 @@ class Loss extends Phaser.Scene {
             duration: 2500,
             delay: 4000,
         });
-
+        this.add.text(game.config.width/8, borderUISize*6 - borderPadding-10, "The timer ran out, you lost!");
+        this.add.text(game.config.width/8, borderUISize*6 - borderPadding+20, "Press W to try the same level again, or S for menu.");
 
         //define the w key
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
