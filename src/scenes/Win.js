@@ -48,7 +48,8 @@ class Win extends Phaser.Scene {
             duration: 2500,
             delay: 4000,
         });
-
+        this.add.text(game.config.width/8, borderUISize*6 - borderPadding-10, "You won!!");
+        this.add.text(game.config.width/8, borderUISize*6 - borderPadding+20, "Press W to continue, or S for menu.");
 
         //define the w key
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
@@ -58,6 +59,7 @@ class Win extends Phaser.Scene {
     update(){
         //press w to go to next level
         if(Phaser.Input.Keyboard.JustDown(keyW)){
+            window.currentLevel += 1;
             this.scene.start("playScene");
         }
         //press s to go to main menu
