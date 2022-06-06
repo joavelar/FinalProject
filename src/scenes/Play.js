@@ -557,12 +557,13 @@ class Play extends Phaser.Scene {
                 }
             }
         }else{
-            if(Phaser.Input.Keyboard.JustDown(keyM)){
-                this.scene.start("menuScene");
-            }
-            if(Phaser.Input.Keyboard.JustDown(keyR)){
-                this.loseCondition = false;
-            }
+            this.scene.start("levelLoss");
+            // if(Phaser.Input.Keyboard.JustDown(keyM)){
+            //     this.scene.start("menuScene");
+            // }
+            // if(Phaser.Input.Keyboard.JustDown(keyR)){
+            //     this.loseCondition = false;
+            // }
         }
     }
 
