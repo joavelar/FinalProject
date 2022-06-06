@@ -415,6 +415,7 @@ class Play extends Phaser.Scene {
                             console.log(this.gameOver);
                             this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
                             //this.create();
+                            this.musicLoop.stop();
                             this.scene.start("levelWin");
                         }
                     }else{
