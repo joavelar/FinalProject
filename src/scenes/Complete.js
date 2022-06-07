@@ -47,10 +47,12 @@ class Complete extends Phaser.Scene {
     update(){
         //press w to go to next level
         if(Phaser.Input.Keyboard.JustDown(keyW)){
+            this.sound.play('sfx_Serrated');
             this.scene.start("playScene");
         }
         //press s to go to main menu
         if(Phaser.Input.Keyboard.JustDown(keyS)){
+            this.sound.play('sfx_LoosePin');
             this.scene.start("menuScene");
         }
 

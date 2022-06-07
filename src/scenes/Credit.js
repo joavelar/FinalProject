@@ -64,6 +64,7 @@ class Credit extends Phaser.Scene {
     update(){
         //press w to start game
         if(Phaser.Input.Keyboard.JustDown(keyW)){
+            this.sound.play('sfx_Serrated');
             this.scene.start("menuScene");
         }
 
