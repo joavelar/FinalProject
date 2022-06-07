@@ -410,13 +410,18 @@ class Play extends Phaser.Scene {
 
                         //win the game
                         if(this.currentStep == 6) {
+                            window.currentLevel += 1;
                             this.gameOver = true; //  for now we want it to end here
                             this.win = true;
                             console.log(this.gameOver);
                             this.pointer.y = 1000; //not sure why this doesn't disappear but this fixes it
                             //this.create();
                             this.musicLoop.stop();
-                            this.scene.start("levelWin");
+                            if(window.currentLevel == 6){
+                                this.scene.start("gameCompletion");
+                            }else{
+                                this.scene.start("levelWin");
+                            } 
                         }
                     }else{
                         this.sound.play('sfx_LoosePin');
@@ -543,20 +548,20 @@ class Play extends Phaser.Scene {
 
 
                 }
-                else
-                {
-                    this.musicLoop.stop();
-                    if(this.win){
-                        window.currentLevel += 1;
-                    }
-                    if(window.currentLevel == 6) {
-                        this.scene.start("menuScene");
-                    }
-                    else
-                    {
-                        this.scene.start("playScene");
-                    }
-                }
+                // else
+                // {
+                //     this.musicLoop.stop();
+                //     if(this.win){
+                //         window.currentLevel += 1;
+                //     }
+                //     if(window.currentLevel == 6) {
+                //         this.scene.start("menuScene");
+                //     }
+                //     else
+                //     {
+                //         this.scene.start("playScene");
+                //     }
+                // }
             }
         }else{
             this.scene.start("levelLoss");

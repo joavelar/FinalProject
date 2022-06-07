@@ -34,7 +34,7 @@ class Loss extends Phaser.Scene {
         });
 
         let restween = this.tweens.add({
-            targets: this.offer,
+            targets: this.result,
             alpha: 1,
             ease: 'Power1',
             duration: 2500,

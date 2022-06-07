@@ -65,6 +65,7 @@ class Menu extends Phaser.Scene {
         //define the s key
         keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
+        keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
         //placeholder skip past menu into playscene
         //this.scene.start("playScene");
@@ -82,6 +83,9 @@ class Menu extends Phaser.Scene {
         }
         if(Phaser.Input.Keyboard.JustDown(keyS)){
             this.scene.start("creditScene");
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyM)){
+            this.scene.start("gameCompletion");
         }
 
     }

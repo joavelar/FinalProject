@@ -59,7 +59,7 @@ class Win extends Phaser.Scene {
     update(){
         //press w to go to next level
         if(Phaser.Input.Keyboard.JustDown(keyW)){
-            window.currentLevel += 1;
+            //window.currentLevel += 1;
             this.scene.start("playScene");
         }
         //press s to go to main menu
