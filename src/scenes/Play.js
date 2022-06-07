@@ -84,7 +84,7 @@ class Play extends Phaser.Scene {
         this.levelStart = false;
         if(window.currentLevel > 0)
         {
-            this.timerLength = 60 - window.currentLevel*10;
+            this.timerLength = 60 - window.currentLevel*5;
             this.memorizeText = this.add.text(game.config.width/3, borderUISize*5 - borderPadding, "Memorize the Symbols");
             this.preClock = this.time.delayedCall(8000, () => {
                 this.levelStart = true; // the lock has been covered and the level timer will begin
